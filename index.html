@@ -247,7 +247,7 @@ function startDraw() {
     const index = Math.floor(Math.random() * names.length);
     names.splice(index, 1);
     renderNames();
-  }, 4000);
+  }, 3000);
 }
 
 function showWinner(name) {
@@ -266,7 +266,7 @@ function showWinner(name) {
     e.style.fontSize = '2em';
     e.style.animation = 'fade 2s forwards';
     document.body.appendChild(e);
-    setTimeout(() => e.remove(), 2000);
+    setTimeout(() => e.remove(), 1000);
   }, 200);
 
   setTimeout(() => clearInterval(interval), 4000);
@@ -315,5 +315,6 @@ loadHallOfFame();
 
 
  
+
 
 

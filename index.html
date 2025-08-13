@@ -76,27 +76,28 @@
       user-select: none;
     }
 
-   #bottle-label {
+#bottle-label {
   position: absolute;
-  bottom: 145px;
+  bottom: 75px; /* <-- muuta tätä arvoa nostaa/laskemaan etikettiä */
   left: 50%;
   transform: translateX(-50%);
-  width: 200px;      /* pienennetty leveys */
+  width: 160px; /* <-- muuta tätä arvoa etiketin leventämiseen/kaventamiseen */
   height: 110px;
   background: transparent;
   padding: 10px 15px;
   font-size: 0.85em;
   font-weight: 600;
   color: #a67c00;
-  overflow-wrap: break-word;  /* pakottaa rivityksen sanojen kohdalla */
-  white-space: normal;        /* sallii rivinvaihdot */
-  text-align: center;         /* keskitetään teksti vaakasuunnassa */
+  overflow-wrap: break-word;
+  white-space: normal;
+  text-align: center;
   user-select: text;
   display: flex;
   flex-wrap: wrap;
   justify-content: center;
   align-content: center;
 }
+
 
 
     textarea {
@@ -238,12 +239,63 @@ function renderNames() {
 function startDraw() {
   if(names.length === 0) return;
   document.getElementById('drawBtn').disabled = true;
+
   const interval = setInterval(() => {
+    if (names.length === 3) {
+      // Kolmanneksi viimeinen tippuu pois, joten ensin poista nimi:
+      const indexToRemove = Math.floor(Math.random() * names.length);
+      names.splice(indexToRemove, 1);
+      renderNames();
+
+      // 1,5 sekunnin viive, sitten näytetään "Finaali alkaa!"
+      setTimeout(() => {
+        const finalMsg = document.createElement('div');
+        finalMsg.textContent = "🏆 Finaali alkaa!";
+        finalMsg.style.position = 'fixed';
+        finalMsg.style.top = '50%';
+        finalMsg.style.left = '50%';
+        finalMsg.style.transform = 'translate(-50%, -50%)';
+        finalMsg.style.fontSize = '3em';
+        finalMsg.style.fontWeight = 'bold';
+        finalMsg.style.background = 'rgba(0,0,0,0.7)';
+        finalMsg.style.color = 'white';
+        finalMsg.style.padding = '20px 40px';
+        finalMsg.style.borderRadius = '15px';
+        finalMsg.style.zIndex = '9999';
+        document.body.appendChild(finalMsg);
+
+        // Näytetään finaaliteksti 2,5 sekuntia
+        setTimeout(() => {
+          finalMsg.remove();
+
+          // Odotetaan vielä 2,5 sekuntia ennen voittajan selviämistä
+          setTimeout(() => {
+            if (names.length === 2) {
+              // Poistetaan satunnainen häviäjä viimeisen karsinnan jälkeen
+              const loserIndex = Math.floor(Math.random() * names.length);
+              names.splice(loserIndex, 1);
+              renderNames();
+
+              // Näytetään voittaja
+              const winner = names[0];
+              showWinner(winner);
+            }
+          }, 2500);
+
+        }, 2500);
+      }, 1500);
+
+      clearInterval(interval);
+      return;
+    }
+
     if (names.length <= 1) {
       clearInterval(interval);
       if (names.length === 1) showWinner(names[0]);
       return;
     }
+    
+    // Poistetaan satunnainen nimi normaalisti
     const index = Math.floor(Math.random() * names.length);
     names.splice(index, 1);
     renderNames();
@@ -266,7 +318,7 @@ function showWinner(name) {
     e.style.fontSize = '2em';
     e.style.animation = 'fade 2s forwards';
     document.body.appendChild(e);
-    setTimeout(() => e.remove(), 1000);
+    setTimeout(() => e.remove(), 2000);
   }, 200);
 
   setTimeout(() => clearInterval(interval), 4000);
@@ -314,7 +366,10 @@ loadHallOfFame();
 </html>
 
 
+
+
  
+
 
 
 
